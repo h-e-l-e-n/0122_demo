@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
 import Multiselect from 'vue-multiselect'
+import { useRouter } from 'vue-router'
 
 const allBanksData = ref([])
 const allBanksOptions = ref([])
@@ -11,6 +12,9 @@ const bankPlaceholder = ref('')
 const branchPlaceholder = ref('')
 const numberPart = ref('')
 const ChinesePart = ref('')
+const resultData = ref('')
+const router = useRouter()
+
 const fetchAllBanksData = async () => {
   const response = await fetch('/data/banks_detail.json')
   const resInJson = await response.json()
@@ -30,12 +34,18 @@ const fetchAllBranchData = (bank) => {
   const findAllBranches = allBanksData.value.filter(
     (bank) => bank.headCodeName === numberPart.value,
   )
-  allBranchOptions.value = findAllBranches
-    .map((bank) => {
-      const removeHead = bank.orgName.replace(ChinesePart.value, '')
-      return removeHead
-    })
-    .filter((branch) => branch !== '')
+
+  if (findAllBranches.length < 2) {
+    selectedBranchOption.value = '無分行資料'
+    return
+  } else {
+    allBranchOptions.value = findAllBranches
+      .map((bank) => {
+        const removeHead = bank.orgName.replace(ChinesePart.value, '')
+        return removeHead
+      })
+      .filter((branch) => branch !== '')
+  }
 }
 watch(
   () => selectedBankOption.value,
@@ -43,6 +53,32 @@ watch(
     if (newVal) {
       selectedBranchOption.value = ''
       fetchAllBranchData(newVal)
+    }
+  },
+)
+watch(
+  () => selectedBranchOption.value,
+  (newVal) => {
+    if (newVal !== '無分行資料') {
+      const findResult = allBanksData.value.find(
+        (bank) => bank.orgName == `${ChinesePart.value}${newVal}`,
+      )
+      router.push({
+        name: 'result',
+        params: {
+          headCodeName: numberPart.value,
+          orgCodeName: findResult?.orgCodeName,
+          orgName: `${ChinesePart.value}-${newVal}`,
+        },
+      })
+      resultData.value = findResult
+    } else {
+      const findResult = allBanksData.value.find((bank) => bank.orgName == ChinesePart.value)
+      router.push({
+        name: 'result',
+        params: { headCodeName: numberPart.value, orgCodeName: '', orgName: ChinesePart.value },
+      })
+      resultData.value = findResult
     }
   },
 )
@@ -54,7 +90,7 @@ onMounted(() => {
 </script>
 <template>
   <div class="search-area">
-    <div class="dropdown-container z-2 mx-3 my-3">
+    <div class="dropdown-container z-2 mx-5 my-3">
       <p class="mb-2">銀行名稱</p>
       <multiselect
         v-model="selectedBankOption"
@@ -62,15 +98,24 @@ onMounted(() => {
         :placeholder="bankPlaceholder"
       ></multiselect>
     </div>
-    <div class="dropdown-container z-2 mx-3 my-3">
-      <p class="mb-2">分行名稱：</p>
+    <div class="dropdown-container z-2 my-3">
+      <p class="mb-2">分行名稱</p>
       <multiselect
+        v-if="selectedBranchOption == '無分行資料'"
+        v-model="selectedBranchOption"
+        :options="allBranchOptions"
+        :placeholder="branchPlaceholder"
+        disabled
+      ></multiselect>
+      <multiselect
+        v-else
         v-model="selectedBranchOption"
         :options="allBranchOptions"
         :placeholder="branchPlaceholder"
       ></multiselect>
     </div>
   </div>
+  <RouterView :getResultData="resultData" />
 </template>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 <style scoped>

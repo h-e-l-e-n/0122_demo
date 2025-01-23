@@ -71,7 +71,7 @@ onMounted(async () => {
         </p>
       </div>
     </div>
-    <div class="bottom-button-area d-flex px-4 my-3 justify-content-between">
+    <div class="bottom-button-area d-flex px-4 my-4 justify-content-between">
       <button type="button" class="btn btn-success" @click="copyURL">{{ urlText }}</button>
       <button type="button" class="btn btn-outline-secondary" @click="clearSearch">重新查詢</button>
     </div>

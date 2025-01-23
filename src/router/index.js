@@ -1,17 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import ResultView from '../views/ResultView.vue'
-import SearchArea from '@/components/SearchArea.vue'
+import ResultView from '../views/components/ResultView.vue'
+import SearchArea from '@/views/index.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'search',
+      name: 'home',
       component: SearchArea,
       children: [
         {
-          path: '/:headCodeName/:orgCodeName?/:orgName',
+          path: '/:headCodeName/:orgCodeName?/:orgName.html',
           name: 'result',
           component: ResultView,
         },

@@ -139,7 +139,12 @@ onMounted(async () => {
         v-model="selectedBankOption"
         :options="allBanksOptions"
         :placeholder="bankPlaceholder"
-      ></multiselect>
+        select-label=""
+        deselect-label=""
+        selected-label=""
+      >
+        <template v-slot:noResult>無相關資料</template>
+      </multiselect>
       <span class="span-text">可使用選單或輸入關鍵字</span>
     </div>
     <div class="dropdown-container z-2 my-3 mx-4">
@@ -156,7 +161,12 @@ onMounted(async () => {
         v-model="selectedBranchOption"
         :options="allBranchOptions"
         :placeholder="branchPlaceholder"
-      ></multiselect>
+        select-label=""
+        deselect-label=""
+        selected-label=""
+      >
+        <template v-slot:noResult>無相關資料</template>
+      </multiselect>
     </div>
   </div>
   <div v-if="selectedBranchOption == '請選擇分行名稱'"></div>

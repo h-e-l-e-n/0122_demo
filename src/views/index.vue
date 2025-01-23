@@ -67,39 +67,40 @@ watch(
     }
   },
 )
+const findBank = (orgName) => allBanksData.value.find((bank) => bank.orgName === orgName)
+
 watch(
   () => selectedBranchOption.value,
   (newVal) => {
-    if (newVal !== '') {
-      if (newVal !== '無分行資料' && newVal !== '請選擇分行名稱') {
-        const findResult = allBanksData.value.find(
-          (bank) => bank.orgName == `${ChinesePart.value}${newVal}`,
-        )
-        if (findResult == undefined) {
-          console.log(findResult)
-        } else {
-          router.push({
-            name: 'result',
-            params: {
-              headCodeName: numberPart.value,
-              orgCodeName: findResult.orgCodeName,
-              orgName: `${ChinesePart.value}-${newVal}`,
-            },
-          })
-        }
-        resultData.value = findResult
+    if (newVal === '') return
+
+    if (newVal !== '無分行資料' && newVal !== '請選擇分行名稱') {
+      const findResult = findBank(`${ChinesePart.value}${newVal}`)
+      if (!findResult) {
+        alert('抱歉，目前沒有該公司資料！')
+        return
       } else {
-        const findResult = allBanksData.value.find((bank) => bank.orgName == ChinesePart.value)
         router.push({
           name: 'result',
-          params: { headCodeName: numberPart.value, orgCodeName: '', orgName: ChinesePart.value },
+          params: {
+            headCodeName: numberPart.value,
+            orgCodeName: findResult.orgCodeName,
+            orgName: `${ChinesePart.value}-${newVal}`,
+          },
         })
-        resultData.value = findResult
       }
+      resultData.value = findResult
+    } else if (newVal === '無分行資料') {
+      const findResult = findBank(ChinesePart.value)
+      router.push({
+        name: 'result',
+        params: { headCodeName: numberPart.value, orgCodeName: '', orgName: ChinesePart.value },
+      })
+      resultData.value = findResult
     }
-    return
   },
 )
+
 onMounted(async () => {
   await fetchAllBanksData()
   if (!route.params.headCodeName) {
@@ -164,7 +165,7 @@ onMounted(async () => {
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 <style scoped>
 .dropdown-container:nth-child(1) {
-  min-width: 20%;
+  min-width: 30%;
 }
 
 @media (min-width: 768px) {

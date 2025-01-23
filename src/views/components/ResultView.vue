@@ -13,9 +13,7 @@ const urlText = ref('複製此頁面連結')
 const emit = defineEmits(['reset-selections'])
 
 const props = defineProps({
-  getResultData: {
-    type: Object,
-  },
+  getResultData: {},
 })
 const fetchResultDetail = async () => {
   const [headName, branchName] = await route.params.orgName.split('-')

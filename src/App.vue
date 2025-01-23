@@ -5,9 +5,7 @@ import { RouterView } from 'vue-router'
   <header>
     <nav class="navbar">
       <div class="container-fluid">
-        <a class="navbar-brand" href="https://vercel.com/h-e-l-e-ns-projects/taiwan-bank"
-          >台灣銀行代碼查詢</a
-        >
+        <a class="navbar-brand" href="https://taiwan-bank.vercel.app/">台灣銀行代碼查詢</a>
       </div>
     </nav>
   </header>
